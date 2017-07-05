@@ -1,12 +1,13 @@
 {
   "name": "accounto",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "license": "MIT",
   "bin": {
     "accounto": "./index.js"
   },
   "dependencies": {
+    "accounto": "^1.0.4",
     "chalk": "^2.0.1",
     "commander": "^2.11.0",
     "es6-promisify": "^5.0.0",
