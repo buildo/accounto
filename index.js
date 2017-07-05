@@ -72,7 +72,8 @@ program
           })
           .then(() => {
             const groupUrl = `https://admin.google.com/AdminHome#GroupDetails:groupEmail=${encodeURIComponent(email)}`;
-            log(info(`\n:clap:  All set! You can manage your group at\n   ${chalk.underline.yellowBright(groupUrl)}`));
+            log(info(`\n:clap:  All set! You can manage this group at\n   ${chalk.underline.yellowBright(groupUrl)}`));
+            process.exit(0);
           });
       });
     })
@@ -86,6 +87,7 @@ program
           log(detail('   If you think this is an error, ask an admin to check your permissions.'));
           break;
         default: log(error(e.code));
+        process.exit(-1);
       }
     });
   });
@@ -149,15 +151,18 @@ function authenticate() {
 
     app.get('/authorize', (req, res) => {
       const code = req.query.code;
-      res.status(200).send('Successfully authenticated! You can now close this tab and go back to your terminal.');
+      res
+        .status(200)
+        .send('Successfully authenticated! You can now close this tab and go back to your terminal.');
 
-      oauth2Client.getToken(code, function (err, tokens) {
+      oauth2Client.getToken(code, (err, tokens) => {
         if (!err) {
           if (!fs.existsSync(accountoDir)) {
             fs.mkdirSync(accountoDir);
           }
           fs.writeFileSync(credentialsPath, JSON.stringify(tokens, null, 2));
           oauth2Client.setCredentials(tokens);
+          log(info('\n:white_check_mark:  Successfully authenticated. Let\'s move on!'));
           resolve(tokens);
         } else {
           reject(err);
@@ -173,7 +178,7 @@ function authenticate() {
 function listGroups() {
   return authenticate().then(() => {
     const list = promisify(directory.groups.list);
-    return list({ customer: 'C02vjwsep' });
+    return list({ customer: 'my_customer' });
   });
 }
 
@@ -201,10 +206,14 @@ function getMe() {
 function getUsers() {
   return authenticate().then(() => {
     const userList = promisify(directory.users.list);
-    return userList({ customer: 'C02vjwsep' });
+    return userList({ customer: 'my_customer' });
   });
 }
 
 program
   .version(version)
   .parse(process.argv);
+
+if (program.args.length === 0) {
+  program.help();
+}
