@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as program from 'commander';
 import { createGroup } from './commands';
 // import pkg from '../package.json';
