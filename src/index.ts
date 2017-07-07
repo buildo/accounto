@@ -2,7 +2,7 @@
 
 import * as program from 'commander';
 import { createGroup } from './commands';
-// import pkg from '../package.json';
+import * as pkg from '../../package.json';
 
 program
   .command('new')
@@ -12,7 +12,7 @@ program
   .action(({ name, email }) => createGroup({ name, email }));
 
 program
-  // .version(pkg.version)
+  .version((pkg as any).version)
   .parse(process.argv);
 
 if (program.args.length === 0) {
