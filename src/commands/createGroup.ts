@@ -4,8 +4,6 @@ import * as chalk from 'chalk';
 import { Answers, Question, prompt as ask } from 'inquirer';
 import { log, info, detail, error } from '../utils';
 
-type Params = { name: string };
-
 function ownersQuestion(users: Array<User>, me: User): Question {
   return {
     type: 'checkbox',
@@ -32,12 +30,12 @@ function membersQuestion(users: Array<User>, me: User): Question {
   };
 }
 
-export default function createGroup({ name }: Params) {
+export default function createGroup(name: string) {
   if (!name) {
     process.exit(-1);
   }
   const email = `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
-  google.createGroup({ name, email }).then(({ id }) => {
+  return google.createGroup({ name, email }).then(({ id }) => {
     google.getMe().then((me: User) => {
       log(info(`:white_check_mark:  Successfully created group ${chalk.yellow(name)} with primary email ${chalk.underline.yellow(email)}\n`));
       return google.getUsers()

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as google from 'googleapis';
 import { User, Member } from 'googleapis';
-import { log, info } from '../utils';
+import { log, info, detail } from '../utils';
 const OAuth2 = google.auth.OAuth2;
 
 const port = 5555;
@@ -42,7 +42,7 @@ export function authenticate() {
         }
       }
       return null;
-    }
+    };
 
     const credentials = retrieveCredentials();
     if (credentials) {
@@ -59,8 +59,8 @@ export function authenticate() {
 
     const url = oauth2Client.generateAuthUrl({ access_type: 'offline', scope: scopes });
 
-    info('\nVisit this URL to authenticate with your Google account:');
-    info(`\n  ${url}`);
+    log(info('\nVisit this URL to authenticate with your Google account:'));
+    log(detail(`\n  ${url}`));
 
     const app = express();
 
@@ -106,7 +106,7 @@ export function createGroup(group: { name: string, email: string }) {
 
 export function addMemberToGroup(groupKey: string, member: Member) {
   return authenticate().then(() => {
-    const addMember = promisify(directory.members.insert)
+    const addMember = promisify(directory.members.insert);
     return addMember({ groupKey, resource: member });
   });
 }
