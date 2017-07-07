@@ -30,12 +30,14 @@ function membersQuestion(users: Array<User>, me: User): Question {
   };
 }
 
-export default async function createGroup(name: string) {
+export default async function createGroup(params: { name: string, email: string }) {
+  const { name, email: _email } = params;
   if (!name) {
+    log(error('No name provided'));
     process.exit(-1);
   }
   try {
-    const email = `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
+    const email = _email || `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
     const { id } = await google.createGroup({ name, email });
     const me = await google.getMe();
     log(info(`:white_check_mark:  Successfully created group ${chalk.yellow(name)} with primary email ${chalk.underline.yellow(email)}\n`));

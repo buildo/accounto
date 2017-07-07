@@ -7,8 +7,9 @@ import { createGroup } from './commands';
 program
   .command('new')
   .description('Create a new group')
-  .option('--name <name>', 'The group name')
-  .action(({ name }) => createGroup(name));
+  .option('--name <name>', 'The group\'s name')
+  .option('--email <email>', 'The group\'s primary email. It defaults to <group_name>@<domain> if not provided.')
+  .action(({ name, email }) => createGroup({ name, email }));
 
 program
   // .version(pkg.version)

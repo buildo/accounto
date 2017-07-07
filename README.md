@@ -14,4 +14,10 @@ Requires node >= 6.
 accounto new --name <group_name>
 ```
 
-This creates a group named `<group_name>` with the primary email `<group_name>@<your_domain>`
+This creates a group named `<group_name>` with the primary email `<group_name>@<your_domain>`.
+
+You can optionally specify an email different than the name with
+
+```
+accounto new --name <group_name> --email <email>
+```
