@@ -54,7 +54,8 @@ export function authenticate() {
       'https://www.googleapis.com/auth/admin.directory.group.member',
       'https://www.googleapis.com/auth/admin.directory.group',
       'https://www.googleapis.com/auth/admin.directory.user.readonly',
-      'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/admin.directory.domain.readonly'
     ];
 
     const url = oauth2Client.generateAuthUrl({ access_type: 'offline', scope: scopes });
@@ -113,4 +114,9 @@ export async function getMe() {
 export async function getUsers() {
   await authenticate();
   return promisify(directory.users.list)({ customer: 'my_customer' });
+}
+
+export async function getDomains() {
+  await authenticate();
+  return promisify(directory.domains.list)({ customer: 'my_customer' });
 }

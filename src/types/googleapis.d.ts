@@ -13,11 +13,15 @@ declare module 'googleapis' {
     },
     users: {
       list(params: { customer: string }, cb: Callback<{ users: Array<User> }>): void
+    },
+    domains: {
+      list(params: { customer: string }, cb: Callback<{ domains: Array<Domain> }>): void
     }
   }
   export type Member = { email: string, role: 'OWNER' | 'MEMBER' };
   export type User = { primaryEmail: string, email: string };
   export type Group = { id: string };
+  export type Domain = { domainName: string };
 
   // google.oauth2
   export function oauth2(params: { version: 'v2', auth: auth.OAuth2 }): Auth

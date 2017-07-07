@@ -37,7 +37,8 @@ export default async function createGroup(params: { name: string, email: string 
     process.exit(-1);
   }
   try {
-    const email = _email || `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
+    const domain = (await google.getDomains()).domains[0];
+    const email = _email || `${name.replace(/\s+/, '-')}@${domain.domainName}`;
     const { id } = await google.createGroup({ name, email });
     const me = await google.getMe();
     log(info(`:white_check_mark:  Successfully created group ${chalk.yellow(name)} with primary email ${chalk.underline.yellow(email)}\n`));
