@@ -1,0 +1,82 @@
+{
+  "extends": ["tslint:recommended", "tslint-eslint-rules"],
+  "rules": {
+    "ordered-imports": [false], // WAT
+    "object-literal-sort-keys": false, // WAT
+    "interface-over-type-literal": false, // literal pros: don't clutter the vscode previews with too much inline stuff. interface pros: ?
+    "member-access": [false], // we don't currently care about public, private, protected, etc'
+    "arrow-parens": false, // as per buildo
+    "ban-types": false, // the interesting one is: Function (prefer a more specific types). Disabled for now, will re-enable when we do this for real
+    "variable-name": [false], // leave me alone
+    "array-type": [false], // no opinion, I think it is only stylistic (prefers T[] to Array<T>)
+    "no-shadowed-variable": false, // as per buildo
+    "interface-name": [false], // wants the I in IProps. no thanks?
+
+    // turned off by buildo:
+    "member-ordering": [false],
+    "no-empty": false,
+
+    // more buildo rules:
+    // possible errors:
+    "no-conditional-assignment": true, // eslint: no-cond-assign
+    "trailing-comma": [true, "never"], // eslint: comma-dangle
+    // TODO: no-copy-paste-default-export/default
+
+    // best practices:
+    "no-unused-expression": true, // eslint: no-new, this is a superset: https://palantir.github.io/tslint/rules/no-unused-expression/
+    // TODO no-param-reassign : not available
+    // TODO no-return-assign : not available
+    // TODO no-sequences : not available
+    "triple-equals": [true],
+    // TODO wrap-iife : not available
+    // TODO no-loop-func : not available
+    // TODO no-extend-native : not available
+    // no-native-reassign NOT NEEDED (ts)
+    // TODO dot-location : missing
+    // TODO: no-loops/no-loops
+    "curly": true,
+    "max-classes-per-file": [ true, 1 ], // 'react/no-multi-comp': [2, { ignoreStateless: true }],
+
+    // stylistic issues:
+    // TODO operator-assignemnt : not available
+    "max-line-length": [false], // we have it in eslint-config-buildo, but it's mostly disabled on projects'
+    // TODO no-plusplus : couldn't find it
+    "semicolon": [true, "always"],
+    "no-trailing-whitespace": true,
+    "quotemark": [true, "single", "jsx-single"],
+    "object-curly-spacing": [true, "always"],
+    // TODO key-spacing : not available
+    "array-bracket-spacing": [false],
+    "ter-indent": [true, 2, { "SwitchCase": 1 }], // eslint: indent
+    // TODO no-new-object : not available
+    // TODO no-array-constructor : not available
+    "object-literal-key-quotes": [true, "as-needed"], // eslint: quote-props
+    // TODO keyword-spacing : not available
+    // TODO comma-spacing : not available
+    // TODO space-infix-ops : not available
+    // TODO space-before-function-paren : not available
+    // TODO space-before-blocks : not available
+    // jsx-quotes : already included in quotemark
+    // TODO dot-notation : not available
+    "no-consecutive-blank-lines": [true],
+    "comment-format": [true, "check-space"], // eslint: spaced-comment
+    "no-multi-spaces": true,
+
+    // variables:
+    // no-unused-vars : there are --noUnusedParameters and --noUnusedLocals in TS
+    // TODO: no-restricted-globals : not available (is it needed? is it integrated into TS?)
+
+    // ES6:
+    // constructor-super : they say "not applicable", not 100% sure why
+    // no-const-assign : not applicable (TS)
+    // no-this-before-super : they say "not applicable", not 100% sure why
+    "no-var-keyword": true, // eslint : no-var
+    "prefer-const": true,
+    // TODO no-class-assign : not available
+    "ter-prefer-arrow-callback": [true],
+    "object-literal-shorthand": true, // eslint: object-shorthand
+    "ter-arrow-spacing": [true]
+    // TODO prefer-spread : not available
+    // TODO prefer-template : not available
+  }
+}

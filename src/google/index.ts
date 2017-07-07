@@ -1,25 +1,11 @@
-const program = require('commander');
-const express = require('express');
-const fs = require('fs');
-const os = require('os');
-const promisify = require('es6-promisify');
-const google = require('googleapis');
+import { promisify } from 'typed-promisify';
+import * as express from 'express';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as google from 'googleapis';
+import { User, Member } from 'googleapis';
+import { log, info } from '../utils';
 const OAuth2 = google.auth.OAuth2;
-
-const version = require('./package.json').version;
-
-program
-  .command('new')
-  .description('Create a new group')
-  .option('--name <name>', 'The group name')
-  .action(({ name  }) => {
-    createGroup({
-      name,
-      email: `${name.replace(/\s+/,'-')}@buildo.io`
-    }).then(() => {
-      console.log(`Successfully create group named ${name}`);
-    });
-  });
 
 const port = 5555;
 const host = 'localhost';
@@ -38,7 +24,12 @@ const directory = google.admin({
   auth: oauth2Client
 });
 
-function authenticate() {
+const auth = google.oauth2({
+  version: 'v2',
+  auth: oauth2Client
+});
+
+export function authenticate() {
 
   return new Promise((resolve, reject) => {
 
@@ -61,27 +52,32 @@ function authenticate() {
 
     const scopes = [
       'https://www.googleapis.com/auth/admin.directory.group.member',
-      'https://www.googleapis.com/auth/admin.directory.group'
+      'https://www.googleapis.com/auth/admin.directory.group',
+      'https://www.googleapis.com/auth/admin.directory.user',
+      'https://www.googleapis.com/auth/userinfo.email'
     ];
 
     const url = oauth2Client.generateAuthUrl({ access_type: 'offline', scope: scopes });
 
-    console.log('\nVisit this URL to authenticate with your Google account:');
-    console.log(`\n  ${url}`);
+    info('\nVisit this URL to authenticate with your Google account:');
+    info(`\n  ${url}`);
 
     const app = express();
 
     app.get('/authorize', (req, res) => {
       const code = req.query.code;
-      res.status(200).send('Successfully authenticated! You can now close this tab and go back to your terminal.');
+      res
+        .status(200)
+        .send('Successfully authenticated! You can now close this tab and go back to your terminal.');
 
-      oauth2Client.getToken(code, function (err, tokens) {
+      oauth2Client.getToken(code, (err, tokens) => {
         if (!err) {
           if (!fs.existsSync(accountoDir)) {
             fs.mkdirSync(accountoDir);
           }
           fs.writeFileSync(credentialsPath, JSON.stringify(tokens, null, 2));
           oauth2Client.setCredentials(tokens);
+          log(info('\n:white_check_mark:  Successfully authenticated. Let\'s move on!'));
           resolve(tokens);
         } else {
           reject(err);
@@ -94,20 +90,37 @@ function authenticate() {
 
 }
 
-function listGroups() {
+export function listGroups() {
   return authenticate().then(() => {
     const list = promisify(directory.groups.list);
-    return list({ customer: 'C02vjwsep' });
+    list({ customer: 'my_customer' });
   });
 }
 
-function createGroup(group) {
+export function createGroup(group: { name: string, email: string }) {
   return authenticate().then(() => {
     const insert = promisify(directory.groups.insert);
     return insert({ resource: group });
   });
 }
 
-program
-  .version(version)
-  .parse(process.argv);
+export function addMemberToGroup(groupKey: string, member: Member) {
+  return authenticate().then(() => {
+    const addMember = promisify(directory.members.insert)
+    return addMember({ groupKey, resource: member });
+  });
+}
+
+export function getMe() {
+  return authenticate().then(() => {
+    const userInfo = promisify(auth.userinfo.get);
+    return userInfo();
+  });
+}
+
+export function getUsers() {
+  return authenticate().then(() => {
+    const userList = promisify(directory.users.list);
+    return userList({ customer: 'my_customer' });
+  });
+}

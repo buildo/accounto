@@ -1,19 +1,36 @@
 {
   "name": "accounto",
   "version": "1.0.7",
-  "main": "index.js",
   "license": "MIT",
   "bin": {
-    "accounto": "./index.js"
+    "accounto": "dist/src/index.js"
+  },
+  "scripts": {
+    "start": "node dist/src/index.js",
+    "watch": "tsc -w",
+    "build": "tsc",
+    "lint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
     "accounto": "^1.0.4",
     "chalk": "^2.0.1",
-    "commander": "^2.11.0",
-    "es6-promisify": "^5.0.0",
+    "commander": "2.9.0",
     "express": "^4.15.3",
     "googleapis": "^20.0.1",
     "inquirer": "^3.1.1",
-    "node-emoji": "^1.5.1"
+    "node-emoji": "^1.5.1",
+    "typed-promisify": "^0.4.0"
+  },
+  "devDependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/commander": "^2.9.1",
+    "@types/express": "^4.0.36",
+    "@types/inquirer": "^0.0.35",
+    "@types/node": "^8.0.8",
+    "@types/node-emoji": "^1.4.0",
+    "scriptoni": "^0.6.10",
+    "tslint": "^5.5.0",
+    "tslint-eslint-rules": "^4.1.1",
+    "typescript": "^2.4.1"
   }
 }
