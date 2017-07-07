@@ -23,7 +23,7 @@ declare module 'googleapis' {
   export function oauth2(params: { version: 'v2', auth: auth.OAuth2 }): Auth
   type Auth = {
     userinfo: {
-      get(): void
+      get(cb: Callback<User>): void
     }
   }
 

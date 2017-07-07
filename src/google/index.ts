@@ -53,7 +53,7 @@ export function authenticate() {
     const scopes = [
       'https://www.googleapis.com/auth/admin.directory.group.member',
       'https://www.googleapis.com/auth/admin.directory.group',
-      'https://www.googleapis.com/auth/admin.directory.user',
+      'https://www.googleapis.com/auth/admin.directory.user.readonly',
       'https://www.googleapis.com/auth/userinfo.email'
     ];
 
@@ -90,37 +90,27 @@ export function authenticate() {
 
 }
 
-export function listGroups() {
-  return authenticate().then(() => {
-    const list = promisify(directory.groups.list);
-    list({ customer: 'my_customer' });
-  });
+export async function listGroups() {
+  await authenticate();
+  return promisify(directory.groups.list)({ customer: 'my_customer' });
 }
 
-export function createGroup(group: { name: string, email: string }) {
-  return authenticate().then(() => {
-    const insert = promisify(directory.groups.insert);
-    return insert({ resource: group });
-  });
+export async function createGroup(group: { name: string, email: string }) {
+  await authenticate();
+  return promisify(directory.groups.insert)({ resource: group });
 }
 
-export function addMemberToGroup(groupKey: string, member: Member) {
-  return authenticate().then(() => {
-    const addMember = promisify(directory.members.insert);
-    return addMember({ groupKey, resource: member });
-  });
+export async function addMemberToGroup(groupKey: string, member: Member) {
+  await authenticate();
+  return promisify(directory.members.insert)({ groupKey, resource: member });
 }
 
-export function getMe() {
-  return authenticate().then(() => {
-    const userInfo = promisify(auth.userinfo.get);
-    return userInfo();
-  });
+export async function getMe() {
+  await authenticate();
+  return promisify(auth.userinfo.get)();
 }
 
-export function getUsers() {
-  return authenticate().then(() => {
-    const userList = promisify(directory.users.list);
-    return userList({ customer: 'my_customer' });
-  });
+export async function getUsers() {
+  await authenticate();
+  return promisify(directory.users.list)({ customer: 'my_customer' });
 }

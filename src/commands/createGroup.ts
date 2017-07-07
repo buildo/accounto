@@ -30,41 +30,32 @@ function membersQuestion(users: Array<User>, me: User): Question {
   };
 }
 
-export default function createGroup(name: string) {
+export default async function createGroup(name: string) {
   if (!name) {
     process.exit(-1);
   }
-  const email = `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
-  return google.createGroup({ name, email }).then(({ id }) => {
-    google.getMe().then((me: User) => {
-      log(info(`:white_check_mark:  Successfully created group ${chalk.yellow(name)} with primary email ${chalk.underline.yellow(email)}\n`));
-      return google.getUsers()
-        .then(({ users }) => {
-          log(info(`:point_down:  Now select the ${chalk.underline('owners')} of this group:`));
-          log(detail(`   (Owners will receive emails sent to the group and can add/remove members)\n`));
-          return ask([ownersQuestion(users, me)]).then(({ owners }) => ({ owners, users }));
-        })
-        .then(({ owners, users }: { owners: Array<string>, users: Array<User> }) => {
-          const nonOwners = users.filter(u => owners.indexOf(u.primaryEmail) === -1);
-          return Promise.all(owners.map(email => google.addMemberToGroup(id, { email, role: 'OWNER' })))
-            .then(() => nonOwners);
-        })
-        .then(nonOwners => {
-          log(info(`\n:point_down:  Wonderful! Now select the ${chalk.underline('members')} of this group:`));
-          log(detail(`   (Members will receive emails sent to the group)\n`));
-          return ask([membersQuestion(nonOwners, me)]);
-        })
-        .then(({ members }: { members: Array<string> }) => {
-          return Promise.all(members.map(email => google.addMemberToGroup(id, { email, role: 'MEMBER' })));
-        })
-        .then(() => {
-          const groupUrl = `https://admin.google.com/AdminHome#GroupDetails:groupEmail=${encodeURIComponent(email)}`;
-          log(info(`\n:clap:  All set! You can manage this group at\n   ${chalk.yellow.underline(groupUrl)}`));
-          process.exit(0);
-        });
-    });
-  })
-  .catch(e => {
+  try {
+    const email = `${name.replace(/\s+/, '-')}@buildo.io`; // FIXME: don't hardcode domain
+    const { id } = await google.createGroup({ name, email });
+    const me = await google.getMe();
+    log(info(`:white_check_mark:  Successfully created group ${chalk.yellow(name)} with primary email ${chalk.underline.yellow(email)}\n`));
+
+    const { users } = await google.getUsers();
+    log(info(`:point_down:  Now select the ${chalk.underline('owners')} of this group:`));
+    log(detail(`   (Owners will receive emails sent to the group and can add/remove members)\n`));
+    const owners: [string] = (await ask([ownersQuestion(users, me)])).owners;
+    const nonOwners = users.filter(u => owners.indexOf(u.primaryEmail) === -1);
+    await Promise.all(owners.map(email => google.addMemberToGroup(id, { email, role: 'OWNER' })));
+
+    log(info(`\n:point_down:  Wonderful! Now select the ${chalk.underline('members')} of this group:`));
+    log(detail(`   (Members will receive emails sent to the group)\n`));
+    const members: [string] = (await ask([membersQuestion(nonOwners, me)])).members;
+    await Promise.all(members.map(email => google.addMemberToGroup(id, { email, role: 'MEMBER' })));
+
+    const groupUrl = `https://admin.google.com/AdminHome#GroupDetails:groupEmail=${encodeURIComponent(email)}`;
+    log(info(`\n:clap:  All set! You can manage this group at\n   ${chalk.yellow.underline(groupUrl)}`));
+    process.exit(0);
+  } catch (e) {
     switch (e.code) {
       case 409:
         log(error(`\n:open_mouth:  The group ${chalk.white(name)} already exists`));
@@ -76,5 +67,5 @@ export default function createGroup(name: string) {
       default: log(error(e.code));
     }
     process.exit(-1);
-  });
+  }
 }
