@@ -10,7 +10,8 @@
     "watch": "tsc -w",
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "smooth-release": "smooth-release"
   },
   "dependencies": {
     "accounto": "^1.0.4",
@@ -30,6 +31,7 @@
     "@types/node": "^8.0.8",
     "@types/node-emoji": "^1.4.0",
     "scriptoni": "^0.6.10",
+    "smooth-release": "^8.0.4",
     "tslint": "^5.5.0",
     "tslint-eslint-rules": "^4.1.1",
     "typescript": "^2.4.1"
