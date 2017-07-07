@@ -5,6 +5,9 @@
   "bin": {
     "accounto": "dist/src/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "node dist/src/index.js",
     "watch": "tsc -w",
